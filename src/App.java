@@ -54,14 +54,14 @@ public class App {
         ArrayList<Edge> games = new ArrayList<Edge>();
         Dictionary<Integer, String> idLookup = new Hashtable<Integer, String>();
 
-        String csv = "/home/lbali/Documents/Java/cfb_project/cfb_project/src/2019.csv";
+        String csv = "/home/lbali/Documents/Java/cfb_project/cfb_project/src/data.csv";
         BufferedReader br = null;
         String line = "";
         String splitBy = ",";
         int count = 0;
         try {
             br = new BufferedReader(new FileReader(csv));
-            br.readLine();
+            // br.readLine();
             while ((br.readLine()) != null) {
                 String[] temp = br.readLine().split(splitBy);
 
@@ -129,61 +129,72 @@ public class App {
         // System.out.println(count);
 
         seasonGraph g = new seasonGraph(0, teams, games, idLookup);
-        int size = 13;
+        int size = 30;
         int firstSize = 0;
         int expanded = 0;
         Random rand = new Random();
         int seed = rand.nextInt(teams.size());
 
         ArrayList<Vertex> path = new ArrayList<Vertex>();
-        while (expanded - firstSize < 1) {
-            if (expanded - firstSize < 1) {
+        while (expanded - firstSize < 5) {
+            if (expanded - firstSize < 5) {
                 do {
                     seed = rand.nextInt(teams.size());
-                } while (teams.get(seed).neighbors.size() < 2);
+                } while (teams.get(seed).neighbors.size() < 1);
             }
-            path = g.circle(teams.get(seed), size);
+            path = g.circle(teams.get(seed), size + 10);
+
             if (path.size() > size) {
-                System.out.println("Finding subpaths, start path (" + path.size() + " units long) is: ");
-                g.printPath(path);
                 firstSize = path.size();
+                System.out.println("Finding subpaths, start path (" + firstSize + " units long) in: ");
+                g.printPath(path);
                 // // Expand by finding unique cycles within this cycle
                 for (int i = 1; i < path.size() - 1; i++) {
+                    firstSize = path.size();
                     // // Find a cycle starting from this point
                     Vertex temp1 = path.get(i);
                     Vertex temp2 = path.get(i + 1);
-                    g.vertexPrint(temp1);
-                    g.vertexPrint(temp2);
-                    System.out.print("Before: ");
-                    g.printPath(g.tempPath);
-                    g.longestPath(temp1, temp2);
-                    // g.printPath(g.tempPath);
-                    // ArrayList<Vertex> tempList = g.tempPath;
-                    // g.printPath(g.tempPath);
-                    System.out.println(g.tempPath.size());
+                    // g.vertexPrint(temp1);
+                    // g.vertexPrint(temp2);
+                    g.longestPath(temp1, temp2, path);
+                    // System.out.print("After: ");
+                    // g.printPath(g.getTempPath());
+                    // g.printPath(g.g.getTempPath()());
+                    // ArrayList<Vertex> tempList = g.getTempPath()();
+                    // g.printPath(g.getTempPath()());
+                    // System.out.println(g.getTempPath().size());
                     // Remove first and last elements
-                    if (g.tempPath.size() > 2) {
-                        // g.printPath(g.tempPath);
-                        g.tempPath.remove(0);
-                        g.tempPath.remove(g.tempPath.size() - 1);
-                        // g.printPath(g.tempPath);
+                    if (g.getTempPath().size() > 2) {
+                        // g.printPath(g.getTempPath());
+                        g.getTempPath().remove(0);
+                        g.getTempPath().remove(g.getTempPath().size() - 1);
+                        // g.printPath(g.getTempPath());
                         // // // If no elements from this cycle are in original cycle, add to it
                         boolean add = true;
-                        for (int j = 0; j < g.tempPath.size(); j++) {
+                        for (int j = 0; j < g.getTempPath().size(); j++) {
                             for (int k = 0; k < path.size(); k++) {
-                                if (g.tempPath.get(j).id == path.get(k).id)
+                                if (g.getTempPath().get(j).id == path.get(k).id) {
                                     add = false;
+                                    break;
+                                }
                             }
                         }
 
-                        if (add)
-                            path.addAll(g.tempPath);
-                        System.out.print("Expanded to " + path.size() + " units: ");
-                        g.printPath(path);
+                        if (add) {
+                            for (int r = 0; r < g.getTempPath().size(); r++) {
+                                path.add(i + r, g.getTempPath().get(r));
+                            }
+                        }
+                        if (firstSize > path.size()) {
+                            System.out.print("Expanded to " + path.size() + " units: ");
+                            g.printPath(path);
+                        }
                     }
+
+                    expanded = path.size() * 5;
                 }
-                expanded = path.size();
             }
+
         }
 
         // boolean t = false;

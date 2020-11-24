@@ -4,6 +4,7 @@ public class seasonGraph extends Graph {
 
     public int year;
     public ArrayList<Vertex> tempPath = new ArrayList();
+    public int tempPathSize = 0;
     public Dictionary<Integer, String> idLookup = new Hashtable<Integer, String>();
 
     public seasonGraph(int year, ArrayList<Vertex> teams, ArrayList<Edge> edges, Dictionary<Integer, String> idLookup) {
@@ -21,7 +22,7 @@ public class seasonGraph extends Graph {
         path.add(this.getID(last));
         int count = 0;
         int times = 0;
-        while (path.size() < size && times < 500) {
+        while (path.size() < size && times < 5000) {
             // Iterate through graph to find path
             // while (times < 500) {
             Vertex k = this.getID(last);
@@ -51,7 +52,16 @@ public class seasonGraph extends Graph {
                 }
                 int largestIndex = 0;
                 int largestNeighbor = neighborCount[0];
-                for (int m = 1; m < neighborCount.length; m++) {
+                ArrayList<Integer> seen = new ArrayList();
+                Random rand = new Random();
+                // Use some randomness to pick next
+                for (int n = 0; n < ((int) neighborCount.length / 2); n++) {
+                    int m = rand.nextInt(neighborCount.length - 1);
+                    while (seen.contains(m)) {
+                        m = rand.nextInt(neighborCount.length - 1);
+                    }
+                    // m++;
+                    seen.add(m);
                     if (neighborCount[m] > largestNeighbor && !path.contains(k.neighbors.get(m))) {
                         largestIndex = m;
                         largestNeighbor = neighborCount[m];
@@ -149,23 +159,35 @@ public class seasonGraph extends Graph {
 
     }
 
-    public void longestPath(Vertex a, Vertex b) {
+    public void longestPath(Vertex a, Vertex b, ArrayList<Vertex> avoid) {
         boolean visited[] = new boolean[this.vertices.size()];
+        for (int j = 0; j < avoid.size(); j++) {
+            if (!(avoid.get(j).id == a.id || avoid.get(j).id == b.id))
+                visited[this.findIndex(avoid.get(j))] = true;
+        }
         ArrayList<Vertex> pathList = new ArrayList<Vertex>();
         pathList.add(a);
+        boolean done = false;
 
         this.tempPath = new ArrayList<Vertex>();
+        this.tempPathSize = 0;
 
-        this.longestPathUtil(a, b, visited, pathList);
-        // this.printPath(pathList);
+        this.longestPathUtil(a, b, visited, pathList, done);
+        // System.out.print("After: ");
+        // this.printPath(this.tempPath);
 
     }
 
-    public void longestPathUtil(Vertex a, Vertex b, boolean[] visited, ArrayList<Vertex> pathList) {
+    public void longestPathUtil(Vertex a, Vertex b, boolean[] visited, ArrayList<Vertex> pathList, boolean done) {
+        if (done)
+            return;
         if (a.id == b.id) {
-            if (pathList.size() > this.tempPath.size()) {
-                this.tempPath = pathList;
-                this.printPath(pathList);
+            if (pathList.size() > this.tempPathSize) {
+                // System.out.println("Same below: ");
+                this.tempPath = new ArrayList<>(pathList);
+                done = true;
+                // this.printPath(this.tempPath);
+                // this.printPath(pathList);
             }
             return;
         }
@@ -173,16 +195,22 @@ public class seasonGraph extends Graph {
         // this.vertexPrint(b);
         visited[this.findIndex(a)] = true;
 
-        for (int i = 0; i < a.neighbors.size(); i++) {
+        for (
+
+                int i = 0; i < a.neighbors.size(); i++) {
             if (!visited[this.findIndex(a.neighbors.get(i))]) {
                 pathList.add(a.neighbors.get(i));
-                longestPathUtil(a.neighbors.get(i), b, visited, pathList);
+                longestPathUtil(a.neighbors.get(i), b, visited, pathList, done);
 
                 pathList.remove(a.neighbors.get(i));
             }
         }
 
         visited[this.findIndex(a)] = false;
+    }
+
+    public ArrayList<Vertex> getTempPath() {
+        return this.tempPath;
     }
 
     public void printPath(ArrayList<Vertex> path) {
