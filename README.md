@@ -1,14 +1,13 @@
-## Getting Started
+# College Football Circle of "Doom"
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Finding a large transitive victory cycle in a graph containing all games in a college football season
+https://www.sbnation.com/college-football/2017/3/14/14921132/college-football-transitive-victories-2016
 
-## Folder Structure
+## Motivation
 
-The workspace contains two folders by default, where:
+To explore graph theory, as well as algorithms and strategies for solving NP-hard problems like finding the largest cycle in a directed graph. 
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Guide
 
-## Dependency Management
+Run App.java
 
-The `JAVA DEPENDENCIES` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-pack/blob/master/release-notes/v0.9.0.md#work-with-jar-files-directly).
