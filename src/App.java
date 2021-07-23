@@ -82,7 +82,7 @@ public class App {
         // Seed size is how large the initial cycle found will be
         int seedSize = 10;
         // Final size is how large the final cycle will be
-        int finalSize = 55;
+        int finalSize = 45;
         int firstSize = 0;
         Random rand = new Random();
         int seed = rand.nextInt(teams.size());

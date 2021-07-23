@@ -13,6 +13,18 @@ public class seasonGraph extends Graph {
         this.idLookup = idLookup;
     }
 
+    public seasonGraph(ArrayList<Vertex> teams, ArrayList<Edge> edges, Dictionary<Integer, String> idLookup) {
+        super(teams, edges);
+        this.year = 0;
+        this.idLookup = idLookup;
+    }
+
+    public seasonGraph(ArrayList<Vertex> teams, Dictionary<Integer, String> idLookup) {
+        super(teams, new ArrayList<Edge>());
+        this.year = 0;
+        this.idLookup = idLookup;
+    }
+
     // Finds some randomly chosen large cycle in the graph
     // Vertex seed is the starting point for this cycle
     // The arrayList returned has at least size elements
